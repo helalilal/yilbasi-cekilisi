@@ -2,7 +2,9 @@
 
 Bir araya gelmeden yılbaşı çekilişi (Secret Santa). Owner çekilişi oluşturur ve katılım linkini paylaşır. Katılımcılar isim, mail ve dilek listesiyle katılır. Owner tek tuşla çekilişi yapar ve herkes kime hediye alacağını mailinden öğrenir. Eşleşmeleri owner dahil kimse sitede göremez.
 
-**Özellikler:** dilek listesi · birbirine çıkmaması gereken kişiler (çiftler vb.) · TR/EN dil desteği · katılımcının kendi kaydını düzenleme veya silme linki · başarısız maili tekrar gönderme · **"Ne alacağımı bilmiyorum"**: mini anket ve yapay zeka (Google Gemini, ücretsiz katman) ile hediye önerileri (`/fikir`; çekiliş mailindeki linkle gelince sana çıkan kişinin dilek listesi otomatik eklenir, IP başına saatte 10 istek).
+**Özellikler:** dilek listesi · birbirine çıkmaması gereken kişiler (çiftler vb.) · TR/EN dil desteği · katılımcının kendi kaydını düzenleme veya silme linki · başarısız maili tekrar gönderme · **"Ne alacağımı bilmiyorum"**: mini anket ve yapay zeka (Google Gemini, ücretsiz katman) ile hediye önerileri (`/fikir`; çekiliş mailindeki linkle gelince sana çıkan kişinin dilek listesi otomatik eklenir, IP başına saatte 10 istek
+
+** Uygulama Linki:** https://yilbasi-cekilisi.vercel.app/
 
 ## Yerelde çalıştırma
 
