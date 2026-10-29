@@ -64,22 +64,28 @@ ${button(p.editUrl, "Edit my wishlist")}`);
 
 export function drawResultMail(p: {
   locale: Locale; to: string; giverName: string; receiverName: string; receiverWishlist: string; eventName: string;
+  ideasUrl: string;
 }): Mail {
   const tr = p.locale === "tr";
+  const ideas = tr
+    ? `<p style="margin-top:20px">Ne alacağını bilmiyor musun? Birkaç soruyu cevapla, sana özel hediye fikirleri gelsin:</p>${button(p.ideasUrl, "Ne alacağımı bilmiyorum 🤔")}`
+    : `<p style="margin-top:20px">Not sure what to buy? Answer a few questions and get personalised gift ideas:</p>${button(p.ideasUrl, "I don't know what to buy 🤔")}`;
   const subject = tr ? `🎁 "${p.eventName}" çekilişinde sana çıkan kişi` : `🎁 Your "${p.eventName}" match`;
   const html = layout(p.eventName, tr
     ? `<p>Merhaba ${esc(p.giverName)},</p>
 <p>Çekiliş yapıldı! Hediye alacağın kişi:</p>
 <p style="font-size:26px;font-weight:bold;color:#b3282d;margin:14px 0">${esc(p.receiverName)}</p>
 <p>Dilek listesi:</p>${wishBlock(p.receiverWishlist, "Dilek listesi boş — biraz yaratıcılık 🎅")}
+${ideas}
 <p style="margin-top:20px;color:#6b7a70;font-size:13px">Bu bir sır — kimseye söyleme! 🤫</p>`
     : `<p>Hi ${esc(p.giverName)},</p>
 <p>The draw is done! You're buying a gift for:</p>
 <p style="font-size:26px;font-weight:bold;color:#b3282d;margin:14px 0">${esc(p.receiverName)}</p>
 <p>Their wishlist:</p>${wishBlock(p.receiverWishlist, "No wishlist — time to get creative 🎅")}
+${ideas}
 <p style="margin-top:20px;color:#6b7a70;font-size:13px">It's a secret — don't tell anyone! 🤫</p>`);
   const text = tr
-    ? `Hediye alacağın kişi: ${p.receiverName}\nDilek listesi:\n${p.receiverWishlist || "-"}`
-    : `You're buying for: ${p.receiverName}\nWishlist:\n${p.receiverWishlist || "-"}`;
+    ? `Hediye alacağın kişi: ${p.receiverName}\nDilek listesi:\n${p.receiverWishlist || "-"}\n\nHediye fikirleri: ${p.ideasUrl}`
+    : `You're buying for: ${p.receiverName}\nWishlist:\n${p.receiverWishlist || "-"}\n\nGift ideas: ${p.ideasUrl}`;
   return { to: p.to, subject, html, text };
 }

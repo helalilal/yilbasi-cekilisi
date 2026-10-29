@@ -5,7 +5,8 @@ import { getDb } from "@/db";
 import type { ErrorKey } from "@/lib/i18n";
 import { drawAssignments, DrawImpossibleError, type Pair } from "@/lib/draw";
 import { findEventAsAdmin, listExclusions, listParticipants, type EventRow, type ParticipantRow } from "@/lib/repo";
-import { newId } from "@/lib/tokens";
+import { getBaseUrl } from "@/lib/locale";
+import { hashToken, newId, newToken } from "@/lib/tokens";
 import { sendMail } from "@/lib/mail/transport";
 import { drawResultMail } from "@/lib/mail/templates";
 
@@ -68,6 +69,12 @@ async function mailAssignment(
   receiver: ParticipantRow,
 ): Promise<boolean> {
   const db = await getDb();
+  // Fresh token per mail: it opens the gift-idea page with this receiver's wishlist.
+  const ideaToken = newToken();
+  await db.query(
+    "UPDATE assignments SET idea_token_hash = $1 WHERE event_id = $2 AND giver_id = $3",
+    [hashToken(ideaToken), event.id, giver.id],
+  );
   let ok = true;
   try {
     await sendMail(
@@ -78,6 +85,7 @@ async function mailAssignment(
         receiverName: receiver.name,
         receiverWishlist: receiver.wishlist,
         eventName: event.name,
+        ideasUrl: `${await getBaseUrl()}/fikir?e=${event.slug}&t=${ideaToken}`,
       }),
     );
   } catch (err) {

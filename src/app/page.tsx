@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getLocale } from "@/lib/locale";
 import { getMessages } from "@/lib/i18n";
 import CreateForm from "@/components/CreateForm";
@@ -22,6 +23,13 @@ export default async function Home() {
         </ol>
       </section>
       <CreateForm t={t} />
+      <Link href="/fikir" className="card flex items-center justify-between gap-3 hover:border-green">
+        <span>
+          <b className="block">{t.ideas.title}</b>
+          <span className="text-sm text-muted">{t.ideas.intro}</span>
+        </span>
+        <span className="text-xl">→</span>
+      </Link>
     </div>
   );
 }

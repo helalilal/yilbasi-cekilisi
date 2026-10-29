@@ -1,6 +1,6 @@
 import "server-only";
 import { getDb, type Db } from "@/db";
-import { tokenMatches } from "./tokens";
+import { hashToken, tokenMatches } from "./tokens";
 import type { Locale } from "./i18n";
 
 export type EventRow = {
@@ -67,6 +67,23 @@ export async function listExclusions(eventId: string, db?: Db): Promise<Exclusio
     "SELECT id, participant_a_id, participant_b_id FROM exclusions WHERE event_id = $1",
     [eventId],
   );
+}
+
+/** Resolves the gift-idea link from a draw mail to the receiver it was drawn for. */
+export async function findReceiverByIdeaToken(
+  slug: string | undefined,
+  token: string | undefined,
+): Promise<{ name: string; wishlist: string } | null> {
+  if (!slug || !token) return null;
+  const d = await getDb();
+  const [row] = await d.query<{ name: string; wishlist: string }>(
+    `SELECT p.name, p.wishlist FROM assignments a
+       JOIN events e ON e.id = a.event_id
+       JOIN participants p ON p.id = a.receiver_id
+      WHERE e.slug = $1 AND a.idea_token_hash = $2`,
+    [slug, hashToken(token)],
+  );
+  return row ?? null;
 }
 
 export async function listAssignments(eventId: string): Promise<AssignmentRow[]> {

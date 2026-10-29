@@ -50,6 +50,12 @@ CREATE TABLE IF NOT EXISTS assignments (
   emailed_at TIMESTAMPTZ,
   PRIMARY KEY (event_id, giver_id)
 );
+CREATE TABLE IF NOT EXISTS ai_requests (
+  ip TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS ai_requests_ip_time ON ai_requests (ip, created_at);
+ALTER TABLE assignments ADD COLUMN IF NOT EXISTS idea_token_hash TEXT;
 `;
 
 async function createPostgres(url: string): Promise<Db> {

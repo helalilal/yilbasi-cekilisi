@@ -24,7 +24,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Link href="/" className="text-lg font-bold">
               🎄 {t.common.appName}
             </Link>
-            <LangSwitch locale={locale} />
+            <div className="flex items-center gap-3">
+              <Link href="/fikir" className="hidden text-sm text-muted hover:text-ink sm:inline">
+                {t.ideas.navLink}
+              </Link>
+              <LangSwitch locale={locale} />
+            </div>
           </header>
           <main className="flex-1 pb-10">{children}</main>
           <footer className="py-6 text-center text-xs text-muted">{t.common.footer}</footer>
