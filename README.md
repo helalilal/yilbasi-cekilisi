@@ -2,7 +2,7 @@
 
 Bir araya gelmeden yılbaşı çekilişi (Secret Santa). Owner çekilişi oluşturur ve katılım linkini paylaşır. Katılımcılar isim, mail ve dilek listesiyle katılır. Owner tek tuşla çekilişi yapar ve herkes kime hediye alacağını mailinden öğrenir. Eşleşmeleri owner dahil kimse sitede göremez.
 
-**Özellikler:** dilek listesi · birbirine çıkmaması gereken kişiler (çiftler vb.) · TR/EN dil desteği · katılımcının kendi kaydını düzenleme veya silme linki · başarısız maili tekrar gönderme · **"Ne alacağımı bilmiyorum"**: mini anket ve yapay zeka (Claude) ile hediye önerileri (`/fikir`; çekiliş mailindeki linkle gelince sana çıkan kişinin dilek listesi otomatik eklenir, IP başına saatte 10 istek).
+**Özellikler:** dilek listesi · birbirine çıkmaması gereken kişiler (çiftler vb.) · TR/EN dil desteği · katılımcının kendi kaydını düzenleme veya silme linki · başarısız maili tekrar gönderme · **"Ne alacağımı bilmiyorum"**: mini anket ve yapay zeka (Google Gemini, ücretsiz katman) ile hediye önerileri (`/fikir`; çekiliş mailindeki linkle gelince sana çıkan kişinin dilek listesi otomatik eklenir, IP başına saatte 10 istek).
 
 ## Yerelde çalıştırma
 
@@ -24,7 +24,7 @@ Testler: `npm test` (çekiliş algoritması)
 3. **Vercel:** projeyi GitHub'a gönder. [vercel.com](https://vercel.com) üzerinde *Import Project* ile ekle ve şu ortam değişkenlerini gir (bkz. `.env.example`):
    - `DATABASE_URL`, `APP_URL` (ör. `https://senin-projen.vercel.app`)
    - `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=465`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`
-   - `ANTHROPIC_API_KEY`: hediye önerileri için ([console.anthropic.com](https://console.anthropic.com) → API Keys)
+   - `GEMINI_API_KEY`: hediye önerileri için ([aistudio.google.com/apikey](https://aistudio.google.com/apikey), ücretsiz)
 4. Deploy et. Siteye gir, çekiliş oluştur ve linki paylaş.
 
 ## Nasıl çalışır?

@@ -1,6 +1,5 @@
 import "server-only";
-import Anthropic from "@anthropic-ai/sdk";
-import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
+import { GoogleGenAI } from "@google/genai";
 import { z } from "zod";
 import type { Locale } from "./i18n";
 
@@ -49,10 +48,14 @@ const labels: Record<string, string> = {
   barely: "barely know them",
 };
 
-let client: Anthropic | null = null;
+// Free tier on the Gemini API; see https://ai.google.dev/gemini-api/docs/pricing
+const MODEL = "gemini-3.5-flash-lite";
+
+let client: GoogleGenAI | null = null;
 
 export async function suggestGifts(s: GiftSurvey, locale: Locale): Promise<GiftIdea[]> {
-  client ??= new Anthropic();
+  if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is not set");
+  client ??= new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   const person = [
     `Gender: ${labels[s.gender]}`,
     `How well the giver knows them: ${labels[s.closeness]}`,
@@ -62,23 +65,17 @@ export async function suggestGifts(s: GiftSurvey, locale: Locale): Promise<GiftI
     `Their own wishlist: ${s.wishlist || "-"}`,
   ].join("\n");
 
-  const response = await client.beta.messages.parse({
-    model: "claude-opus-5-5",
-    max_tokens: 16000,
-    betas: ["server-side-fallback-2026-07-01"],
-    fallbacks: "default",
-    output_config: { effort: "medium", format: betaZodOutputFormat(IdeasSchema) },
-    system: SYSTEM,
-    messages: [
-      {
-        role: "user",
-        content: `<person>\n${person}\n</person>\n\nWrite the gift ideas in ${locale === "tr" ? "Turkish" : "English"}.`,
-      },
-    ],
+  const response = await client.models.generateContent({
+    model: MODEL,
+    contents: `<person>\n${person}\n</person>\n\nWrite the gift ideas in ${locale === "tr" ? "Turkish" : "English"}.`,
+    config: {
+      systemInstruction: SYSTEM,
+      responseMimeType: "application/json",
+      responseJsonSchema: z.toJSONSchema(IdeasSchema),
+    },
   });
 
-  if (response.stop_reason === "refusal" || !response.parsed_output) {
-    throw new Error(`No gift ideas (stop_reason: ${response.stop_reason})`);
-  }
-  return response.parsed_output.ideas.slice(0, 6);
+  const parsed = IdeasSchema.safeParse(JSON.parse(response.text ?? "null"));
+  if (!parsed.success) throw new Error(`Unexpected Gemini response: ${response.text?.slice(0, 200)}`);
+  return parsed.data.ideas.slice(0, 6);
 }
